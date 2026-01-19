@@ -16,6 +16,10 @@ To set-up VS code for python
 --> Reach for and install the Python extension for VScode
 
 #4
-To check API KEYS are available in the codespace
+If using github codespaces, set-up API_KEYs as github secrets and check that the API KEYS are available in the codespace
 >> echo $OPENAI_API_KEY
 >> echo $ANTHROPIC_API_KEY
+
+If using local machine, set-up API_KEYS in .env & use the dotenv python packahe to load & access environment variables.
+*** ensure .env is listed in the .gitignore file, so that it does not get committed to github ***
+
