@@ -1,0 +1,16 @@
+name: ai-agents-env
+channels: # list conda channles to use 
+  - conda-forge
+  - defaults
+dependencies: # list all package dependencies that can use conda for installation
+  - python=3.12
+  - langchain 
+  - wikipedia 
+  - langchain-community 
+  - langchain-openai
+  - langchain-anthropic
+  - python-dotenv
+  - pydantic
+  - pip
+  - pip: # list all dependencies that need pip for installation
+    - duckduckgo-search
