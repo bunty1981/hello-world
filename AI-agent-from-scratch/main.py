@@ -18,8 +18,8 @@ import os;
 openai_api_key = os.environ.get("OPENAI_API_KEY") # Assumes OPENAI_API_KEY setup in github secrets
 anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY") # Assumes OPENAI_API_KEY setup in github secrets
 
-llm = ChatOpenAI(model="gpt-4", temperature=0, api_key=openai_api_key) 
-#llm_claude = ChatAnthropic(model="claude-2", temperature=0, api_key=anthropic_api_key) 
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=openai_api_key) 
+#llm_claude = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0, api_key=anthropic_api_key)
 
 # # Running on local machines
 # from dotenv import load_dotenv # Load in environment variable, including secrete keys for .env
