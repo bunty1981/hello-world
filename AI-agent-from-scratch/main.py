@@ -6,6 +6,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain.agents import create_agent
+
 #from langchain_core.tools import search_tool, wiki_tool, save_tool
 
 #from langchain_classic.agents import create_tool_calling_agent, AgentExecutor
@@ -37,60 +38,40 @@ class ResearchResponse(BaseModel):
     sources: list[str]
     tools_used: list[str]
 
-# # parser to parse response object
-# parser = PydanticOutputParser(pydantic_object=ResearchResponse)
-
-# Prompt template - creates a chat prompt template from a variety of message formats
-# prompt = ChatPromptTemplate.from_messages(
-#     [
-#         #system prompt telling the agent what its function is and how to response to a reqsearch query
-#         (
-#             "system",
-#             #""" --> Allow text to span multiple lines
-#             """ 
-#             You are a research assistant that will help generate a research paper.
-#             Answer the user query and use neccessary tools. 
-#             Wrap the output in this format and provide no other text\n{my_format_instructions}
-#             """,
-#         ),
-
-#         # the next three fields will be populated automatically when the agent runs
-#         # ("placeholder", "{chat_hisytory}"), # will be populated automatically when the agent runs
-#         # ("human", "{query}"), # will be populated automatically when the agent runs
-#         # ("placeholder", "{agent_Scratchpad}"), # will be populated automatically when the agent runs
-#     ]
-# ).partial(my_format_instructions=parser.get_format_instructions)
-
-system_prompt = "You are a research assistant that will help generate a research paper. Answer the user query and use neccessary tools. Ensure the output conforms to the provided schema."
+system_prompt = """You are a research assistant that will help generate a research paper. 
+    Answer the user query and use neccessary tools. 
+    Ensure the output conforms to the provided schema."""
 
 prompt = ChatPromptTemplate.from_messages([
         #system prompt telling the agent what its function is and how to response to a reqsearch query
         ("system", system_prompt),
-        ("human", "{query}")
+        ("placeholder", "{chat_History}"), # If using memory
+        ("human", "{query}"),
+        ("placeholder", "{agent_Scratchpad}"), # REQUIRED
     ])
 
 
-
-
-# convert teh llm output to be structured
-llm = llm.with_structured_output(ResearchResponse)
-chain = prompt | llm
-
+## USAGE using a chain with a sturctured output model to test the prompt and llm are working together as expected
+# convert the llm output to be structured
+structured_llm = llm.with_structured_output(ResearchResponse)
+# create a simple chain to test the prompt and llm are working together as expected
+chain = prompt | structured_llm
 raw_response = chain.invoke({"query":"What is the capital of Zimbabwe"})
-print(raw_response)
+print("Response from Chain: ", raw_response)
 
-## *** --> need to work on how to create_agent with system_prompt and tools, and how to invoke the agent with a query.***
-# *** --> also need to fix git issues ***
-# # Creates a simple agent & set-up the agent-executor under the hood 
-# agent = create_agent(
-#     model = llm,
-#     system_prompt = prompt,
-#     tools = []
-# )
+##USAGE using an agent to test the prompt and llm are working together as expected, and to show how we can use the agent-executor under the hood without needing to set it up ourselves
+# Creates a simple agent & set-up the agent-executor under the hood 
+agent = create_agent(
+    model = llm,
+    system_prompt = system_prompt,
+    response_format = ResearchResponse, #Uses LLM ProviderStartegy by default to convert the LLM output to be structured, but can also use a custom output parser if needed
+    tools = []
+)
 
+#invoke the agent
+query = "What is the capital of France?"
+raw_response = agent.invoke(
+    {"messages": [{"role": "user", "content": query}]}
+)
+print("Response from Agent: ", raw_response)
 
-# #invoke the agent
-# raw_response = agent.invoke({"query":"What is the capital of Zimbabwe"})
-
-#response = llm.invoke("What is the capital of France?")
-#print(response)
