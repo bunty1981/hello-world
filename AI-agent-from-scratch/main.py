@@ -80,6 +80,7 @@ raw_response = chain.invoke({"query":"What is the capital of Zimbabwe"})
 print(raw_response)
 
 ## *** --> need to work on how to create_agent with system_prompt and tools, and how to invoke the agent with a query.***
+# *** --> also need to fix git issues ***
 # # Creates a simple agent & set-up the agent-executor under the hood 
 # agent = create_agent(
 #     model = llm,
