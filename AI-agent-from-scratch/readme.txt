@@ -23,3 +23,5 @@ If using github codespaces, set-up API_KEYs as github secrets and check that the
 If using local machine, set-up API_KEYS in .env & use the dotenv python packahe to load & access environment variables.
 *** ensure .env is listed in the .gitignore file, so that it does not get committed to github ***
 
+The code here is based on code from the below git repo:
+https://github.com/techwithtim/PythonAIAgentFromScratch/blob/main/tools.py

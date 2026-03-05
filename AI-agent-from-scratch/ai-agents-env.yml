@@ -13,4 +13,4 @@ dependencies: # list all package dependencies that can use conda for installatio
   - pydantic
   - pip
   - pip: # list all dependencies that need pip for installation
-    - duckduckgo-search
+    - ddgs # Replacement for the legacy duckduckgo-search package
