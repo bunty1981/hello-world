@@ -7,6 +7,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain.agents import create_agent
 
+from tools import search_tool, wiki_tool, save_tool
+
 #from langchain_core.tools import search_tool, wiki_tool, save_tool
 
 #from langchain_classic.agents import create_tool_calling_agent, AgentExecutor
@@ -51,27 +53,32 @@ prompt = ChatPromptTemplate.from_messages([
     ])
 
 
-## USAGE using a chain with a sturctured output model to test the prompt and llm are working together as expected
-# convert the llm output to be structured
-structured_llm = llm.with_structured_output(ResearchResponse)
-# create a simple chain to test the prompt and llm are working together as expected
-chain = prompt | structured_llm
-raw_response = chain.invoke({"query":"What is the capital of Zimbabwe"})
-print("Response from Chain: ", raw_response)
+# ## USAGE using a chain with a sturctured output model to test the prompt and llm are working together as expected
+# # convert the llm output to be structured
+# structured_llm = llm.with_structured_output(ResearchResponse)
+# # create a simple chain to test the prompt and llm are working together as expected
+# chain = prompt | structured_llm
+# raw_response = chain.invoke({"query":"What is the capital of Zimbabwe"})
+# print("Response from Chain: ", raw_response)
 
 ##USAGE using an agent to test the prompt and llm are working together as expected, and to show how we can use the agent-executor under the hood without needing to set it up ourselves
 # Creates a simple agent & set-up the agent-executor under the hood 
+
+tools = [search_tool, wiki_tool, save_tool] # Can add more tools here, but for now just testing with one to show how it works
+
 agent = create_agent(
     model = llm,
     system_prompt = system_prompt,
     response_format = ResearchResponse, #Uses LLM ProviderStartegy by default to convert the LLM output to be structured, but can also use a custom output parser if needed
-    tools = []
+    tools = tools #[]
 )
 
 #invoke the agent
-query = "What is the capital of France?"
-raw_response = agent.invoke(
+query =  input("What can I research for you?") #"What is the capital of France?"
+result = agent.invoke(
     {"messages": [{"role": "user", "content": query}]}
 )
-print("Response from Agent: ", raw_response)
+print("Response from Agent: ", result["structured_response"]) # The agent-executor will return the structured response from the LLM in a key called "structured_response" by default, but this can be changed in the agent configuration if needed
+
+# Add tools to the agent and test it out
 
